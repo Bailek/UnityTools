@@ -51,7 +51,6 @@ public class WindowAnimator : EditorWindow
             AnimationMode.BeginSampling();
             AnimationMode.SampleAnimationClip(AnimatorFocus, CurrentClip, time);
             AnimationMode.EndSampling();
-
             SceneView.RepaintAll();
         }
     }
@@ -63,6 +62,13 @@ public class WindowAnimator : EditorWindow
         {
             if (GUILayout.Button(Animators.name))
             {
+                if (Selection.activeGameObject != Animators.gameObject)
+                {
+                    Highlighter.Highlight("Hierarchy", Animators.name);
+                    Selection.activeGameObject = Animators.gameObject;
+                    SceneView.FrameLastActiveSceneView();
+                }
+                CurrentClip = null;
                 AnimatorFocus = Animators.gameObject;
                 animator = Animators;
                 time = 0;
@@ -75,37 +81,50 @@ public class WindowAnimator : EditorWindow
 
         if(animator != null)
         {
+
+            GUILayout.Label("Click On Animation and click Play bouton to Start Animation");
+            GUILayout.Space(10
+                );
             foreach (var AllAnim in animator.runtimeAnimatorController.animationClips)
             {
                 if (GUILayout.Button(AllAnim.name))
                 {
-                    AnimationMode.StartAnimationMode();
-                    if(CurrentClip == AllAnim)
-                    {
-                        PlayAnim = false;
-                    }
-                    else
-                    {
-                        PlayAnim = true;
-                    }
                     CurrentClip = AllAnim;
-                    if (!PlayAnim)
-                    {
-                        AnimationMode.StopAnimationMode();
-                    }
                 }
             }
-            GUILayout.Space(25);
-            GUILayout.Label("Accelerate");
-            SpeedAnim = EditorGUILayout.Slider(SpeedAnim, 0, 2f);
-            GUILayout.Label("Time Anim : " + CurrentClip.length + " sec");
-            time = EditorGUILayout.Slider(time, 0f, CurrentClip.length);
 
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("Loop ");
-            GUILayout.Space(-100);
-            Loop = EditorGUILayout.Toggle(Loop);
-            GUILayout.EndHorizontal();
+            
+            
+
+            if(CurrentClip != null){
+                GUILayout.Space(25);
+
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("PlayButton"))
+                {
+                    if (!Loop)
+                    {
+                        time = 0;
+                    }
+                    PlayAnim = true;
+                }
+                if (GUILayout.Button("StopButton"))
+                {
+                    PlayAnim = false;
+                }
+                GUILayout.EndHorizontal();
+                GUILayout.Space(25);
+                GUILayout.Label("Accelerate");
+                SpeedAnim = EditorGUILayout.Slider(SpeedAnim, 0, 2f);
+                GUILayout.Label("Time Anim : " + CurrentClip.length + " sec");
+                time = EditorGUILayout.Slider(time, 0f, CurrentClip.length);
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("Loop ");
+                Loop = EditorGUILayout.Toggle(Loop);
+                GUILayout.EndHorizontal();
+            }
+            
         }
         
     }
