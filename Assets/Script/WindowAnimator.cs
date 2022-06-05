@@ -93,9 +93,6 @@ public class WindowAnimator : EditorWindow
                 }
             }
 
-            
-            
-
             if(CurrentClip != null){
                 GUILayout.Space(25);
 
